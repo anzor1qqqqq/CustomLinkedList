@@ -79,6 +79,8 @@ public:
 	void removeElemFront() {
 		if (this->sizeList != 0) {
 			this->listNode = this->listNode->nextElem;
+
+			this->sizeList--;
 		} else {
 			abort();
 		};
@@ -95,6 +97,8 @@ public:
 			};
 
 			current->nextElem = current->nextElem->nextElem;
+
+			this->sizeList--;
 		} else {
 			abort();
 		};
