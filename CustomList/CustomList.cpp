@@ -4,7 +4,7 @@ using namespace std;
 
 template <typename T>
 struct Node {
-	Node<T> *nextElem;
+	Node<T>* nextElem;
 	T elem;
 
 	Node(T elemParam = T(), Node<T>* nextElemParam = nullptr) {
@@ -17,7 +17,7 @@ template <typename T>
 class CustomList {
 private:
 
-	Node<T> *listNode;
+	Node<T>* listNode;
 	int sizeList;
 
 public:
@@ -28,8 +28,23 @@ public:
 	};
 
 	CustomList(const CustomList& other) {
-		this->listNode = other->listNode;
-		this->sizeList = other->sizeList;
+		this->sizeList = other.sizeList;
+
+		if (this->sizeList != 0) {
+			this->listNode = new Node<T>(other.listNode->elem);
+
+			Node<T>* currentMain = other.listNode->nextElem;
+			Node<T>* currentCopy = this->listNode;
+
+			for (int i = 0; i < this->sizeList - 1; i++) {
+				currentCopy->nextElem = new Node<T>(currentMain->elem);
+
+				currentMain = currentMain->nextElem;
+				currentCopy = currentCopy->nextElem;
+			};
+		} else {
+			this->listNode = nullptr;
+		};
 	};
 
 	void addElem(T elem) {
@@ -57,9 +72,9 @@ public:
 	};
 
 	void addElemIndex(T newElem, int index) {
-		if (this->sizeList == 0) {
+		if (this->sizeList == 0 && index == 0) {
 			this->addElem(newElem);
-		} else if (index == 0) {
+		} else if (this->sizeList > 0 && index == 0) {
 			this->addElemFront(newElem);
 		} else if (this->sizeList >= index) {
 			Node<T>* current = this->listNode;
@@ -77,17 +92,17 @@ public:
 	};
 
 	void removeElemFront() {
-		if (this->sizeList != 0) {
-			this->listNode = this->listNode->nextElem;
+		Node<T>* tmp = this->listNode;
 
-			this->sizeList--;
-		} else {
-			abort();
-		};
+		this->listNode = tmp->nextElem;
+
+		delete tmp;
+
+		this->sizeList--;
 	};
 
 	void removeElemIndex(int index) {
-		if (index == 0) {
+		if (this->sizeList > 0 && index == 0) {
 			this->removeElemFront();
 		} else if (this->sizeList > index) {
 			Node<T>* current = this->listNode;
@@ -96,7 +111,11 @@ public:
 				current = current->nextElem;
 			};
 
-			current->nextElem = current->nextElem->nextElem;
+			Node<T>* deleteElem = current->nextElem;
+
+			current->nextElem = deleteElem->nextElem;
+
+			delete deleteElem;
 
 			this->sizeList--;
 		} else {
@@ -118,10 +137,38 @@ public:
 		abort();
 	};
 
-	~CustomList() {
-		delete listNode;
+	void clear() {
+		while (this->sizeList != 0) {
+			this->removeElemFront();
+		};
 	};
-}; 
+
+	void operator = (const CustomList& other) {
+		this->sizeList = other.sizeList;
+
+		if (this->sizeList != 0) {
+			this->clear();
+
+			this->listNode = new Node<T>(other.listNode->elem);
+
+			Node<T>* currentMain = other.listNode->nextElem;
+			Node<T>* currentCopy = this->listNode;
+
+			for (int i = 0; i < this->sizeList - 1; i++) {
+				currentCopy->nextElem = new Node<T>(currentMain->elem);
+
+				currentMain = currentMain->nextElem;
+				currentCopy = currentCopy->nextElem;
+			};
+		} else {
+			this->listNode = nullptr;
+		};
+	};
+
+	~CustomList() {
+		this->clear();
+	};
+};
 
 int main() {
 	CustomList<int> firstList;
@@ -138,5 +185,5 @@ int main() {
 
 	firstList.addElemIndex(15, 0);
 
-	firstList.removeElemIndex(0);
+	firstList.removeElemIndex(2);
 };
