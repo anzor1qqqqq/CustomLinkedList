@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -143,26 +143,29 @@ public:
 		};
 	};
 
-	void operator = (const CustomList& other) {
-		this->sizeList = other.sizeList;
+	CustomList operator= (const CustomList& other) {
+		if (&other != this) {
+			if (this->sizeList != 0) {
+				this->clear();
 
-		if (this->sizeList != 0) {
-			this->clear();
+				this->sizeList = other.sizeList;
+				this->listNode = new Node<T>(other.listNode->elem);
 
-			this->listNode = new Node<T>(other.listNode->elem);
+				Node<T>* currentMain = other.listNode->nextElem;
+				Node<T>* currentCopy = this->listNode;
 
-			Node<T>* currentMain = other.listNode->nextElem;
-			Node<T>* currentCopy = this->listNode;
+				for (int i = 0; i < this->sizeList - 1; i++) {
+					currentCopy->nextElem = new Node<T>(currentMain->elem);
 
-			for (int i = 0; i < this->sizeList - 1; i++) {
-				currentCopy->nextElem = new Node<T>(currentMain->elem);
-
-				currentMain = currentMain->nextElem;
-				currentCopy = currentCopy->nextElem;
+					currentMain = currentMain->nextElem;
+					currentCopy = currentCopy->nextElem;
+				};
+			} else {
+				this->listNode = nullptr;
 			};
-		} else {
-			this->listNode = nullptr;
 		};
+
+		return *this;
 	};
 
 	~CustomList() {
