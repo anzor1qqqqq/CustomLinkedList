@@ -76,7 +76,7 @@ public:
 			this->addElem(newElem);
 		} else if (this->sizeList > 0 && index == 0) {
 			this->addElemFront(newElem);
-		} else if (this->sizeList >= index) {
+		} else if (this->sizeList > index) {
 			Node<T>* current = this->listNode;
 
 			for (int i = 0; i < index - 1; i++) {
